@@ -4,5 +4,5 @@ from schematics.types import StringType, DateTimeType, IntType
 
 
 class QueueObject(Model):
-    message = StringType()
+    queue_id = IntType()
     added_to_queue = DateTimeType(default=datetime.datetime.now)
