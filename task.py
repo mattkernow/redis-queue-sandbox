@@ -1,9 +1,12 @@
 import psycopg2
 
 
+DB_CONNECTION = "dbname=queue host=localhost port=5432 user=postgres password=postgres"
+
+
 def insert_into_db(queue_id, add_to_queue_date):
     # Connect to an existing database
-    conn = psycopg2.connect("dbname=queue host=localhost port=5432 user=postgres password=postgres")
+    conn = psycopg2.connect(DB_CONNECTION)
 
     # Open a cursor to perform database operations
     cur = conn.cursor()
