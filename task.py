@@ -5,6 +5,11 @@ DB_CONNECTION = "dbname=queue host=localhost port=5432 user=postgres password=po
 
 
 def insert_into_db(queue_id, add_to_queue_date):
+    """
+    Task to be run asynchronously by Redis worker
+    :param queue_id: id of record to update
+    :param add_to_queue_date: datetime added to queue
+    """
     # Connect to an existing database
     conn = psycopg2.connect(DB_CONNECTION)
 
