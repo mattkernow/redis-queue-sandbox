@@ -2,15 +2,14 @@ from flask import Flask, request
 from rq import Queue
 from task import insert_into_db
 from redis import Redis
-from model import QueueObject
+from model import RequestObject
 from datetime import datetime
 
 app = Flask(__name__)
 
-
 # Create Redis connection and work queue
-redis_conn = Redis()
-q = Queue(connection=redis_conn)
+REDIS_CONNECTION = Redis()
+REDIS_QUEUE = Queue(connection=REDIS_CONNECTION)
 
 
 @app.route('/add_to_queue/', methods=['POST', 'GET'])
@@ -22,15 +21,16 @@ def add_job_to_queue():
     content = request.get_json(force=True)
     content['added_to_queue'] = datetime.now()
 
-    # Create QueueObject instance
-    queue_obj = QueueObject(content)
+    # Create RequestObject instance
+    # this validates the user input
+    request_object = RequestObject(content)
 
     # Get the queue_id and datetime
-    queue_id = int(queue_obj.queue_id)
-    datetime_as_str = str(queue_obj.added_to_queue)
+    queue_id = int(request_object.queue_id)
+    datetime_as_str = str(request_object.added_to_queue)
 
     # Add to Redis default queue
-    q.enqueue(insert_into_db, queue_id, datetime_as_str)
+    REDIS_QUEUE.enqueue(insert_into_db, queue_id, datetime_as_str)
     return '{} added to queue'.format(queue_id), 200
 
 

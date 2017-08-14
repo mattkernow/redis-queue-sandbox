@@ -5,25 +5,15 @@ DB_CONNECTION = "dbname=queue host=localhost port=5432 user=postgres password=po
 
 
 def insert_into_db(queue_id, add_to_queue_date):
-    """
-    Task to be run asynchronously by Redis worker
-    :param queue_id: id of record to update
-    :param add_to_queue_date: datetime added to queue
-    """
-    # Connect to an existing database
+    # Task to be run asynchronously by Redis worker
+
+    # Connect the db for each queue item to slow the completion of each task
     conn = psycopg2.connect(DB_CONNECTION)
 
-    # Open a cursor to perform database operations
+    # Insert the record into the postgres table
     cur = conn.cursor()
-
-    # Execute a command: this creates a new table
-    query_str = """
-    UPDATE public.migration_id
-    SET added_to_queue=%s, written_to_table=now()
-    WHERE
-    queue_id=%s;
-    """
-    cur.execute(query_str, (add_to_queue_date, queue_id))
+    query_str = 'INSERT INTO public.migration_id (queue_id, added_to_queue, written_to_table) VALUES (%s, %s, DEFAULT);'
+    cur.execute(query_str, (queue_id, add_to_queue_date))
 
     conn.commit()
     cur.close()
