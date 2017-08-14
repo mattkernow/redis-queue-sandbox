@@ -1,4 +1,4 @@
-# Redis Python Queue System
+# Python-Redis Asynchronous Queue
 
 1. start Redis docker container:
 
